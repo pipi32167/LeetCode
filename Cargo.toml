@@ -1,0 +1,7 @@
+[package]
+name = "LeetCode"
+version = "0.1.0"
+authors = ["Million Young <pipi32167@gmail.com>"]
+
+[dependencies]
+regex = "1"
