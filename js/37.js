@@ -1,269 +1,255 @@
-var isRowValid = function (board, row) {
-  
-  for(var i = 0; i < 9; i++) {
-    var item = board[row][i];
-    if (item === '.') {
-      continue;
+var assert = require('assert');
+
+const NUMS = {}
+for (let i = 1; i <= 9; i++) {
+  NUMS[i] = true
+}
+
+var getRowVals = function (board, i, j) {
+  const nums = Object.assign({}, NUMS)
+  for (let k = 0; k < 9; k++) {
+    if (k !== j && board[i][k] !== '.' && !(board[i][k] instanceof Array)) {
+      delete nums[board[i][k]]
     }
-    for(var j = i + 1; j < 9; j++) {
-      if (item === board[row][j]) {
-        return false;
+  }
+  return Object.keys(nums)
+}
+
+var getColVals = function (board, i, j) {
+  const nums = Object.assign({}, NUMS)
+  for (let k = 0; k < 9; k++) {
+    if (k !== i && board[k][j] !== '.' && !(board[k][j] instanceof Array)) {
+      delete nums[board[k][j]]
+    }
+  }
+  return Object.keys(nums)
+}
+
+
+var getSquareVals = function (board, i, j) {
+  const nums = Object.assign({}, NUMS)
+  const startI = Math.floor(i / 3) * 3
+  const startJ = Math.floor(j / 3) * 3
+  // console.log({ startI, startJ });
+
+  for (let k = 0; k < 9; k++) {
+    const i2 = startI + Math.floor(k / 3)
+    const j2 = startJ + k % 3
+    if (!(i === i2 && j === j2) && board[i2][j2] !== '.' && !(board[i2][j2] instanceof Array)) {
+      delete nums[board[i2][j2]]
+    }
+  }
+  return Object.keys(nums)
+}
+
+var mkIntersecion = function (...valsArray) {
+  const map = new Map()
+  for (let i = 0; i < valsArray.length; i++) {
+    for (let j = 0; j < valsArray[i].length; j++) {
+      const e = valsArray[i][j];
+      map.set(e, (map.get(e) || 0) + 1)
+    }
+  }
+  const result = []
+  for (const entry of map.entries()) {
+    if (entry[1] === valsArray.length) {
+      result.push(entry[0])
+    }
+  }
+  return result
+}
+
+var getVals = function (board, i, j) {
+
+  const vals1 = getRowVals(board, i, j)
+  const vals2 = getColVals(board, i, j)
+  const vals3 = getSquareVals(board, i, j)
+  const vals = mkIntersecion(vals1, vals2, vals3)
+  return vals
+}
+
+var solveStep1 = function (board) {
+
+  let hit = false
+  do {
+    hit = false
+    for (let i = 0; i < 9; i++) {
+      for (let j = 0; j < 9; j++) {
+        if (board[i][j] === '.') {
+
+          var vals = getVals(board, i, j)
+          if (vals.length === 0) {
+            return false
+          }
+          // assert.ok(vals.length > 0)
+          if (vals.length === 1) {
+            // console.log({ i, j, vals1, vals2, vals3, vals, board: JSON.stringify(board), });
+            board[i][j] = vals[0]
+            hit = true
+            // console.log('hit', { i, j, vals });
+          }
+        }
       }
     }
-  }
-  return true;
+  } while (hit)
+  return true
 }
-
-var isColValid = function (board, col) {
-  
-  for(var i = 0; i < 9; i++) {
-    var item = board[i][col];
-    if (item === '.') {
-      continue;
-    }
-    for(var j = i + 1; j < 9; j++) {
-      if (item === board[j][col]) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
-var getSquareRowAndCol = function (square, i) {
-  var baseRow = Math.floor(square / 3) * 3;
-  var baseCol = square % 3 * 3;
-
-  var row = Math.floor(i / 3);
-  var col = i % 3;
-  return {
-    row: baseRow + row,
-    col: baseCol + col,
-  }
-}
-
-// console.log(getSquareRowAndCol(0, 0));
-// console.log(getSquareRowAndCol(0, 1));
-// console.log(getSquareRowAndCol(0, 2));
-// console.log(getSquareRowAndCol(0, 3));
-// console.log(getSquareRowAndCol(1, 0));
-// console.log(getSquareRowAndCol(1, 3));
-// console.log(getSquareRowAndCol(8, 8));
-// console.log(getSquareRowAndCol(8, 8));
-
-
-var isSquareValid = function (board, square) {
-  
-  for(var i = 0; i < 9; i++) {
-    var idx = getSquareRowAndCol(square, i)
-    var item = board[idx.row][idx.col];
-    if (item === '.') {
-      continue;
-    }
-    for(var j = i + 1; j < 9; j++) {
-      var idx2 = getSquareRowAndCol(square, j)
-      if (item === board[idx2.row][idx2.col]) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
-/**
- * @param {character[][]} board
- * @return {boolean}
- */
-var isValidSudoku = function(board) {
-
-  for(var i = 0; i < 9; i++) {
-    if (!isRowValid(board, i) || 
-        !isColValid(board, i) || 
-        !isSquareValid(board, i)) {
-      return false
-    }
-  }
-  return true;
-};
 
 var clone = function (board) {
-  var result = [];
+  return new Array(board.length).fill(0).map((e, idx) => board[idx].slice(0))
+}
 
-  for(var i = 0; i < 9; i++) {
-    result[i] = result[i] || []
-    for(var j = 0; j < 9; j++) {
-      result[i][j] = board[i][j];
+var override = function (board1, board2) {
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      board1[i][j] = board2[i][j]
     }
   }
-  return result;
 }
 
-var count = 0
+var solveStep2 = function (board) {
 
-// var solve = function (solution) {
-//   // console.log('solve', level, solution, newValue);
-//   count++
-//   if (count % 1000 === 0) {
-//     console.log(count);
-//   }
-  
-//   var n = 9;
-//   var isSolve = true;
-//   for(var i = 0; i < n; i ++ ) {
-//     for(var j = 0; j < n; j ++ ) {
-//       if (solution[i][j] !== '.') {
-//         continue;
-//       }
-
-//       isSolve = false;
-      
-//       for(var k = 1; k <= 9; k ++) {
-//         var newSolution = clone(solution);
-//         newSolution[i][j] = k.toString();
-//         if (isValidSudoku(newSolution)) {
-//           var res = solve(newSolution);
-//           if (res.isSolve) {
-//             return res;
-//           }
-//         }
-//       }
-//     }
-//   }
-//   return { isSolve, solution };
-// }
-
-Object.values = function (o) {
-  return Object.keys(o).map(function (k) {
-    return o[k];
-  })
-}
-
-var getSolution = function (board) {
-  // console.log('getSolution', board);
-  
-  var result = {};
-  for(var i = 0; i < 9; i++) {
-    for(var j = 0; j < 9; j++) {
-      if (board[i][j] !== '.') {
-        continue;
-      }
-      for(var k = 1; k <= 9; k++) {
-        var newBoard = clone(board);
-        newBoard[i][j] = k.toString();
-        if (isValidSudoku(newBoard)) {
-          var key = i + ',' + j
-          result[key] = result[key] || {
-            x: i, 
-            y: j,
-            v: []
-          }
-          result[key].v.push(k.toString());
+  let minLen = 10,
+    min
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      if (board[i][j] === '.') {
+        const vals = getVals(board, i, j)
+        assert.ok(vals.length > 0)
+        if (minLen > vals.length) {
+          minLen = vals.length
+          min = [i, j, vals]
         }
       }
     }
   }
 
-  result = Object.values(result);
-  var newBoard = clone(board);
-  var isFill = false;
-  for(var i = 0; i < result.length; i++) {
-    var tmp = result[i];
-    if (tmp.v.length === 1) {
-      newBoard[tmp.x][tmp.y] = tmp.v[0];
-      isFill = true;
+  if (!min) {
+    return true
+  }
+
+  const [i, j, vals] = min
+  for (let k = 0; k < vals.length; k++) {
+    const tmpBoard = clone(board)
+    tmpBoard[i][j] = vals[k]
+    if (!solveStep1(tmpBoard)) {
+      continue
+    }
+    if (solveStep2(tmpBoard)) {
+      override(board, tmpBoard)
+      return true
     }
   }
-  if (isFill) {
-    return getSolution(newBoard);
-  }
-  // console.log(result, Object.values(result));
-  
-  return {  
-    board,
-    solution: result,
-  };
-}
-
-var isSolved = function (board) {
-  
-  for(var i = 0; i < 9; i++) {
-    for(var j = 0; j < 9; j++) {
-      if (board[i][j] === '.') {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
-
-var solve = function (board) {
-  
-  var res = getSolution(board);
-  console.log(res.solution);
-  
-  board = res.board;
-  var solution = res.solution;
-  
-  if (solution.length === 0 && isSolved(board)) {
-    // console.log(board);
-    return board;
-  }
-
-  for(var i = 0; i < solution.length; i++) {
-    var tmp = solution[i]
-    for(var j = 0; j < tmp.v.length; j++) {
-      var newBoard = clone(board);
-      newBoard[tmp.x][tmp.y] = tmp.v[j].toString();
-      var res = solve(newBoard);
-      if(res) {
-        // console.log(res);
-        return res;
-      }
-    }
-  }
-
-  return false;
+  return false
 }
 
 /**
  * @param {character[][]} board
  * @return {void} Do not return anything, modify board in-place instead.
  */
-var solveSudoku = function(board) {
-  var res = solve(board)
-  if (res) {
-    for(var i = 0; i < 9; i++) {
-      for(var j = 0; j < 9; j++) {
-        board[i][j] = res[i][j];
-      }
-    }
-  }
-  // console.log(board);
+var solveSudoku = function (board) {
+
+  solveStep1(board)
   
+  const res = solveStep2(board)
+  // console.log(res, board);
 };
 
 
-// console.log(solveSudoku([
-//   ["5","3",".",".","7",".",".",".","."],
-//   ["6",".",".","1","9","5",".",".","."],
-//   [".","9","8",".",".",".",".","6","."],
-//   ["8",".",".",".","6",".",".",".","3"],
-//   ["4",".",".","8",".","3",".",".","1"],
-//   ["7",".",".",".","2",".",".",".","6"],
-//   [".","6",".",".",".",".","2","8","."],
-//   [".",".",".","4","1","9",".",".","5"],
-//   [".",".",".",".","8",".",".","7","9"]
-// ]));
+assert.deepEqual(getRowVals([
+  ["5", "3", ".", ["1", '2'], "7", "4", "6", "8", "9"]
+], 0, 2), ['1', '2'])
+assert.deepEqual(getColVals([
+  ["5"],
+  ["3"],
+  ["."],
+  [
+    ["1", '2']
+  ],
+  ["7"],
+  ["4"],
+  ["6"],
+  ["8"],
+  ["9"]
+], 2, 0), ['1', '2'])
+assert.deepEqual(getSquareVals([
+  ["5", "3", "."],
+  ["1", "7", "4"],
+  ["6", "8", "9"]
+], 0, 2), ['2'])
+assert.deepEqual(getSquareVals([
+  ["5", ["3"], "."],
+  ["1", "7", ['4', '2']],
+  ["6", "8", "9"]
+], 0, 2), ['2', '3', '4'])
+assert.deepEqual(getSquareVals([
+  ["5", "3", ["1", "2", "4"],
+    ["2", "6"], "7", ["2", "4", "6"],
+    ["4", "6"],
+    ["2", "4"],
+    ["2", "4"]
+  ],
+  ["6", ["2", "4", "7"],
+    ["2", "4", "7"], "1", "9", "5", ["3", "4"],
+    ["2", "3", "4"],
+    ["2", "4"]
+  ],
+  [
+    ["1", "2"], "9", "8", ["2", "5", "7"],
+    ["4", "5"],
+    ["2", "4", "7"],
+    ["3", "4", "5"], "6", ["2", "4"]
+  ],
+  ["8", ["1", "2", "4", "5", "7"],
+    ["1", "2", "4", "5", "7"],
+    ["2", "5", "7"], "6", ["2", "4", "7"],
+    ["4", "5", "7"],
+    ["2", "4", "5"], "3"
+  ],
+  ["4", ["2", "5", "7"],
+    ["2", "5", "7"], "8", "5", "3", ".", ".", "1"
+  ],
+  ["7", ".", ".", ".", "2", ".", ".", ".", "6"],
+  [".", "6", ".", ".", ".", ".", "2", "8", "."],
+  [".", ".", ".", "4", "1", "9", ".", ".", "5"],
+  [".", ".", ".", ".", "8", ".", ".", "7", "9"]
+], 4, 6), ['2', '4', '5', '7', '8', '9'])
 
-console.log(solveSudoku([
-  [".",".",".","2",".",".",".","6","3"],
-  ["3",".",".",".",".","5","4",".","1"],
-  [".",".","1",".",".","3","9","8","."],
-  [".",".",".",".",".",".",".","9","."],
-  [".",".",".","5","3","8",".",".","."],
-  [".","3",".",".",".",".",".",".","."],
-  [".","2","6","3",".",".","5",".","."],
-  ["5",".","3","7",".",".",".",".","8"],
-  ["4","7",".",".",".","1",".",".","."]]
-));
+// assert.deepEqual(mkIntersecion(['2', '6', '7', '8'], ['1', '3', '4', '5', '9'], ['1', '2', '3', '4', '7', '9']), ['1'])
+
+var {
+  board,
+  result
+} = require('./37_input').sample1;
+solveSudoku(board)
+assert.deepEqual(board, result)
+var {
+  board,
+  result
+} = require('./37_input').sample2;
+solveSudoku(board)
+assert.deepEqual(board, result)
+var {
+  board,
+  result
+} = require('./37_input').sample3;
+solveSudoku(board)
+assert.deepEqual(board, result)
+// var {
+//   board,
+//   result
+// } = require('./37_input').sample4;
+// solveSudoku(board)
+// assert.deepEqual(board, result)
+
+
+for (let i = 0; i < 100; i++) {
+  var {
+    board,
+    result
+  } = require('./37_input').sample4;
+  board = clone(board)
+  solveSudoku(board)
+  assert.deepEqual(board, result)
+}
+

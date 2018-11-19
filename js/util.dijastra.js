@@ -64,7 +64,7 @@ var evaluate = function (input) {
         var op = ops.pop()
         var val2 = Number(vals.pop())
         var val1 = Number(vals.pop())
-        console.log({ val1, op, val2 });
+        // console.log({ val1, op, val2 });
         
         switch (op) {
           case '+': vals.push(val1 + val2); break;
@@ -78,9 +78,10 @@ var evaluate = function (input) {
       default: vals.push(input[i]); break;
     }
   }
-  console.log(vals);
+  // console.log(vals);
   
   return vals[0]
 }
 
-// console.log(dijastraEval('(((((1+2)-3)*4)/50)%6)'), 0);
+var assert = require('assert')
+assert.equal(evaluate('(((((1+2)-3)*4)/50)%6)'), 0);

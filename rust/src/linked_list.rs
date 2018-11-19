@@ -1,58 +1,99 @@
-// // use std::collections::LinkedList;
-// // #[derive(Debug)]
-// // struct LinkedListNode {
-// //   val: u32,
-// //   next: Box<LinkedListNode>,
-// // }
+//detail: http://cglab.ca/~abeinges/blah/too-many-lists/book/third-final.html
 
-// // #[derive(Debug)]
-// // enum LinkedList {
-// //   Node(Box<LinkedListNode>),
-// //   Nil,
-// // }
+use std::rc::Rc;
 
-// // impl LinkedList {
-// //   pub fn new() -> LinkedList {
-// //     LinkedList::Nil
-// //   }
+#[derive(Debug, Clone)]
+struct List<T> {
+  head: Link<T>,
+  // tail: Link<T>,
+}
 
-// //   pub fn prepend(elem: u32) -> LinkedList {
-// //     Box<>
-// //   }
+type Link<T> = Option<Rc<Node<T>>>;
 
-// //   pub fn append(self, elem: u32) -> Self {
+#[derive(Debug, Clone)]
+struct Node<T> {
+  elem: T,
+  next: Link<T>,
+  // prev: Link<T>,
+}
 
-// //   }
-
-// //   // fn get(n: usize) -> Option<u32> {
-
-// //   // }
-// // }
-
-// macro_rules! list {
-//   ($($elem: expr), *) => {{
-//     let mut list: LinkedList<u32> = LinkedList::new();
-//     $( list.push_back($elem); )*
-//     list
-//   }}
+// #[derive(Debug)]
+// struct Iter<'a, T: 'a> {
+//   next: Option<&'a Node<T>>,
 // }
 
-// #[test]
-// fn test_original_linked_list() {
-//   let mut list1: LinkedList<u32> = LinkedList::new();
-//   list1.push_back(1);
-//   list1.push_back(2);
-//   list1.push_front(3);
-//   assert_eq!(list1.len(), 3);
-//   assert_eq!(*list1.front().unwrap(), 3);
-//   assert_eq!(*list1.back().unwrap(), 2);
-// }
+impl<T> List<T> {
+  fn new() -> Self {
+    List {
+      head: None,
+      // tail: None,
+    }
+  }
 
-// #[test]
-// fn test_list_macro() {
-//   let list: LinkedList<u32> = list![1u32,2,3,4,5];
-//   assert_eq!(list.len(), 5);
-//   assert_eq!(*list.front().unwrap(), 1);
-//   assert_eq!(*list.back().unwrap(), 5);
-//   // println!("{:?}", list)
-// }
+  fn prepend(&self, elem: T) -> Self {
+    let node = Some(Rc::new(Node {
+      elem: elem,
+      next: self.head.clone(),
+      // prev: None,
+    }));
+    List {
+      head: node.clone(),
+      // tail: if self.tail.is_none() {
+      //   node.clone()
+      // } else {
+      //   self.tail.clone()
+      // },
+    }
+  }
+
+  // fn append(&self, elem: T) -> Self {
+
+  //   let mut result = List<T>::new()
+    
+  // }
+
+  // fn append(&self, elem: T) -> Self {
+  //   let node = Some(Rc::new(Node {
+  //     elem: elem,
+  //     next: None,
+  //     prev: self.tail.clone(),
+  //   }));
+  //   let head = if self.head.is_none() {
+  //     node.clone()
+  //   } else {
+  //     let mut head = self.head.clone();
+  //     head.unwrap().next = node;
+  //     head
+  //   };
+  //   List {
+  //     head: head,
+  //     tail: node.clone(),
+  //   }
+  // }
+
+  fn as_slice(&mut self) -> Vec<T>
+  where
+    T: Clone,
+  {
+    let mut result: Vec<T> = vec![];
+    let mut now = self.head.clone();
+    while let Some(node) = now.clone() {
+      result.push(node.elem.clone());
+      now = node.next.clone()
+    }
+    result
+  }
+}
+
+#[test]
+fn test_linked_list() {
+  let mut ll: List<u32> = List::new();
+  // ll = ll.append(1);
+  // println!("{:?}", ll);
+  // ll = ll.append(2);
+  // println!("{:?}", ll);
+  // assert_eq!(ll.as_slice(), vec![1, 2]);
+  ll = ll.prepend(3);
+  ll = ll.prepend(4);
+  assert_eq!(ll.as_slice(), vec![4, 3]);
+}

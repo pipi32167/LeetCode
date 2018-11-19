@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const execSync = require('child_process').execSync;
+const assert = require('assert');
+
+const problem = process.argv[2]
+
+assert.equal(execSync(`sh ${problem}.sh ${problem}_input`).toString(), fs.readFileSync(`${problem}_output`).toString())

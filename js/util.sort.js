@@ -82,23 +82,23 @@ var quickSort = function (nums) {
 // console.log(quickSort([4,5,2,1,3]));
 // quickSort(_.range(1, 20000))
 
-var quickSort3 = function (nums, l, u) {
+var quickSort3 = function (nums, l, u, cmpFn = (a, b) => a - b) {
   if (l >= u) {
     return nums
   }
 
   var t = nums[l], i = l, j = u+1
   while(true) {
-    do { i++ } while(i <= u && nums[i] < t)
-    do { j-- } while(nums[j] > t)
+    do { i++ } while(i <= u && cmpFn(nums[i], t) < 0)
+    do { j-- } while(cmpFn(nums[j], t) > 0)
     if (i > j) {
       break
     }
     swap(nums, i, j)
   }
   swap(nums, l, j)
-  quickSort3(nums, l, j - 1)
-  quickSort3(nums, j + 1, u)
+  quickSort3(nums, l, j - 1, cmpFn)
+  quickSort3(nums, j + 1, u, cmpFn)
   return nums
 }
 
