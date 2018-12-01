@@ -78,14 +78,14 @@ var shuffle = function (nums) {
   return nums
 }
 
-console.log(shuffle([1, 2, 3, 4, 5]));
-console.log(shuffle([1, 2, 3, 4, 5]));
-console.log(shuffle([1, 2, 3, 4, 5]));
-console.log(shuffle([1, 2, 3, 4, 5]));
-console.log(shuffle([1, 2, 3, 4, 5]));
-var time = Date.now()
-shuffle(new Array(1000000).fill(0).map((e, idx) => idx))
-console.log('shuffle cost: %d ms', Date.now() - time)
+// console.log(shuffle([1, 2, 3, 4, 5]));
+// console.log(shuffle([1, 2, 3, 4, 5]));
+// console.log(shuffle([1, 2, 3, 4, 5]));
+// console.log(shuffle([1, 2, 3, 4, 5]));
+// console.log(shuffle([1, 2, 3, 4, 5]));
+// var time = Date.now()
+// shuffle(new Array(1000000).fill(0).map((e, idx) => idx))
+// console.log('shuffle cost: %d ms', Date.now() - time)
 
 
 var shuffle_fisher_yates = function (nums) {
@@ -97,14 +97,14 @@ var shuffle_fisher_yates = function (nums) {
   return nums
 }
 
-console.log(shuffle_fisher_yates([1, 2, 3, 4, 5]));
-console.log(shuffle_fisher_yates([1, 2, 3, 4, 5]));
-console.log(shuffle_fisher_yates([1, 2, 3, 4, 5]));
-console.log(shuffle_fisher_yates([1, 2, 3, 4, 5]));
-console.log(shuffle_fisher_yates([1, 2, 3, 4, 5]));
-var time = Date.now()
-shuffle_fisher_yates(new Array(1000000).fill(0).map((e, idx) => idx))
-console.log('shuffle_fisher_yates cost: %d ms', Date.now() - time)
+// console.log(shuffle_fisher_yates([1, 2, 3, 4, 5]));
+// console.log(shuffle_fisher_yates([1, 2, 3, 4, 5]));
+// console.log(shuffle_fisher_yates([1, 2, 3, 4, 5]));
+// console.log(shuffle_fisher_yates([1, 2, 3, 4, 5]));
+// console.log(shuffle_fisher_yates([1, 2, 3, 4, 5]));
+// var time = Date.now()
+// shuffle_fisher_yates(new Array(1000000).fill(0).map((e, idx) => idx))
+// console.log('shuffle_fisher_yates cost: %d ms', Date.now() - time)
 /**
  * Fisher–Yates shuffle
  */
@@ -119,6 +119,6 @@ Array.prototype.shuffle = function () {
   }
   return input;
 }
-var time = Date.now()
-new Array(1000000).fill(0).map((e, idx) => idx).shuffle()
-console.log('Array.shuffle cost: %d ms', Date.now() - time)
+// var time = Date.now()
+// new Array(1000000).fill(0).map((e, idx) => idx).shuffle()
+// console.log('Array.shuffle cost: %d ms', Date.now() - time)

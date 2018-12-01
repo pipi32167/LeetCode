@@ -1,5 +1,30 @@
 
 
+var DFS = function (root, result) {
+  
+  if (!root) {
+    return
+  }
+
+  result.push(root.val)
+  DFS(root.left, result)
+  DFS(root.right, result)
+}
+
+var BFS = function (root, result) {
+  const stack = [root]
+  while (stack.length > 0) {
+    const node = stack.shift()
+    result.push(node.val)
+    if (node.left) {
+      stack.push(node.left)
+    }
+    if (node.right) {
+      stack.push(node.right)
+    }
+  }
+}
+
 /**
  * recursion version
  * @param {TreeNode} root

@@ -178,6 +178,32 @@ var bucketSort = function (nums, bucketSize) {
   return result
 }
 
+
+var merge = function (left, right) {
+  const final = []
+  while(left.length && right.length) {
+    final.push(left[0] <= right[0] ? left.shift() : right.shift())
+  }
+  return final.concat(left).concat(right)
+}
+
+var mergeSort = function (nums) {
+  if (nums.length < 2) {
+    return nums
+  }
+  const mid = parseInt(nums.length / 2)
+  return merge(mergeSort(nums.slice(0, mid)), mergeSort(nums.slice(mid)))
+}
+
+assert.deepEqual(mergeSort([]), []);
+assert.deepEqual(mergeSort([1]), [1]);
+assert.deepEqual(mergeSort([5,4,3,2,1]), [1,2,3,4,5]);
+assert.deepEqual(mergeSort([1,2,3,4,5]), [1,2,3,4,5]);
+assert.deepEqual(mergeSort([5,3,1,2,4]), [1,2,3,4,5]);
+assert.deepEqual(mergeSort([4,5,2,1,3]), [1,2,3,4,5]);
+assert.deepEqual(mergeSort([1,1,1,1,1]), [1,1,1,1,1]);
+assert.deepEqual(mergeSort([5,1,1,1,1]), [1,1,1,1,5]);
+
 var calcAlgoTimeImpl = function (sortFn, count) {
   
   var nums = genRandomNums(count);
@@ -193,6 +219,7 @@ var calcAlgoTime = function (count) {
   // calcAlgoTimeImpl(insertionSort, count)
   calcAlgoTimeImpl(quickSort, count)
   calcAlgoTimeImpl(bucketSort, count)
+  calcAlgoTimeImpl(mergeSort, count)
 }
 
 // calcAlgoTime(100)
