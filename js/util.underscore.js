@@ -1,4 +1,4 @@
-exports.map = function (collection, mapFn) {
+var map = exports.map = function (collection, mapFn) {
   if (collection instanceof Array) {
     return collection.map(mapFn)
   } else if (collection instanceof Object) {
@@ -8,7 +8,7 @@ exports.map = function (collection, mapFn) {
   }
 }
 
-exports.range = function range(begin, end) {
+var range = exports.range = function range(begin, end) {
   var result = []
   for (var i = begin; i < end; i++) {
     result.push(i)
@@ -16,7 +16,7 @@ exports.range = function range(begin, end) {
   return result;
 }
 
-exports.random = function random(l, u) {
+var random = exports.random = function random(l, u) {
 
   if (arguments.length === 0) {
     return Math.random();
@@ -122,3 +122,47 @@ Array.prototype.shuffle = function () {
 // var time = Date.now()
 // new Array(1000000).fill(0).map((e, idx) => idx).shuffle()
 // console.log('Array.shuffle cost: %d ms', Date.now() - time)
+
+var ReserviorSample = function (size) {
+  this._size = size
+  this._pool = []
+  this._counter = 0
+}
+
+ReserviorSample.prototype.feed = function (item) {
+
+  this._counter++
+  if (this._pool.length < this._size) {
+    this._pool.push(item)
+    return this._pool
+  }
+
+  const rand = random(this._counter)
+  if (rand + 1 <= this._size) {
+    this._pool[rand] = item
+  }
+  return this._pool
+}
+
+var test_reservior_sample = function () {
+
+  let result = []
+  for (let i = 0; i < 10000; i++) {
+    const sample = new ReserviorSample(3)
+    const nums = range(1, 11)
+    for (let j = 0; j < nums.length; j++) {
+      sample.feed(nums[j])
+    }
+    // console.log(sample._pool);
+    result = result.concat(sample._pool)
+  }
+
+  // console.log(result.length);
+
+  const map = new Map
+  for (let i = 0; i < result.length; i++) {
+    map.set(result[i], (map.get(result[i]) || 0) + 1)
+  }
+  console.log(map);
+}
+// test_reservior_sample()

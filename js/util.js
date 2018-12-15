@@ -112,3 +112,9 @@ var swap = function (arr, i, j) {
   arr[i] = arr[j];
   arr[j] = tmp;
 }
+
+var now = Date.now()
+var log = function (tag) {
+  console.log('%s cost: %d ms', tag, Date.now() - now);
+  now = Date.now()
+}
