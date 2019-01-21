@@ -28,4 +28,4 @@ class Solution:
 
         return A
 
-s = Solution()
+
