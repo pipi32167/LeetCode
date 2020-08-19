@@ -172,3 +172,10 @@ Object.defineProperty(MedianFinder.prototype, 'length', {
   }
 })
 
+const assert = require('assert');
+finder = new MedianFinder()
+finder.addNum(1)
+finder.addNum(2)
+assert.equal(finder.findMedian(), 1.5)
+finder.addNum(3)
+assert.equal(finder.findMedian(), 2)

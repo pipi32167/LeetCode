@@ -27,7 +27,7 @@ var countBits = function (code, n) {
  * @param {number} n
  * @return {number[]}
  */
-var grayCode = function(n) {
+var grayCode0 = function(n) {
   
   var code = 0
   var result = [code]
@@ -49,6 +49,20 @@ var grayCode = function(n) {
     }
   }
   return result
+};
+
+/**
+ * @param {number} n
+ * @return {number[]}
+ */
+var grayCode = function(n) {
+  
+  const ret = []
+  const N = 1 << n
+  for (let i = 0; i < N; i++) {
+    ret.push(i ^ (i>>1))
+  }
+  return ret
 };
 
 console.log(grayCode(2));

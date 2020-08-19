@@ -1,3 +1,5 @@
+const { equal, ok } = require("assert");
+
 var isOverlap = function (i1, i2) {
   if(
     i1.start >= i2.start && i1.end <= i2.end || 
@@ -101,10 +103,11 @@ var isPalindrome = function (s, begin, end) {
   return true;
 }
 
-console.log(isPalindrome(''));
-console.log(isPalindrome('a'));
-console.log(isPalindrome('aba'));
-console.log(isPalindrome('abc'));
+
+ok(isPalindrome(''));
+ok(isPalindrome('a'));
+ok(isPalindrome('aba'));
+ok(!isPalindrome('abc'));
 
 
 var swap = function (arr, i, j) {

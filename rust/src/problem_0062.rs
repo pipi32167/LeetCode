@@ -3,7 +3,7 @@ mod problem_0062 {
 
   pub fn unique_paths(m: usize, n: usize) -> u64 {
     let mut dp: Vec<u64> = vec![0,1];
-    dp.resize_default((m + 1) * (n + 1));
+    dp.resize_with((m + 1) * (n + 1), Default::default);
     for i in 1..=m {
       for j in 1..=n {
         let res = dp[(i - 1) * (n + 1) + j] + dp[i * (n + 1) + j - 1];

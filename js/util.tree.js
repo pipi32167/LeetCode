@@ -30,15 +30,16 @@ var BFS = function (root, result) {
  * @param {TreeNode} root
  * @return {number[]}
  */
-var preorderTraversalRecursion = function (root, result) {
+var preorderTraversalRecursion = function (root, result, withNull = false) {
 
   if (!root) {
+    if(withNull) result.push(null)
     return
   }
 
   result.push(root.val)
-  preorderTraversalRecursion(root.left, result)
-  preorderTraversalRecursion(root.right, result)
+  preorderTraversalRecursion(root.left, result, withNull)
+  preorderTraversalRecursion(root.right, result, withNull)
 };
 
 /**
@@ -73,15 +74,16 @@ var preorderTraversal = function (root) {
  * @param {TreeNode} root
  * @return {number[]}
  */
-var inorderTraversalRecursion = function (root, result) {
+var inorderTraversalRecursion = function (root, result, withNull = false) {
 
   if (!root) {
+    if(withNull) result.push(null)
     return
   }
 
-  inorderTraversalRecursion(root.left, result)
+  inorderTraversalRecursion(root.left, result, withNull)
   result.push(root.val)
-  inorderTraversalRecursion(root.right, result)
+  inorderTraversalRecursion(root.right, result, withNull)
 };
 
 /**
@@ -163,7 +165,7 @@ var BST = function () {
  */
 function TreeNode(val) {
   this.val = val;
-  this.left = this.right = null;
+  this.right = this.left = null;
 }
 
 function createTreeImpl(nodes, val) {
@@ -181,6 +183,20 @@ function createTreeImpl(nodes, val) {
 function createTree(nodes) {
   let rootVal = nodes.shift()
   return createTreeImpl(nodes, rootVal)
+}
+
+function createTree(vals) {
+  if (vals.length === 0) return null
+  const root = new TreeNode(vals.shift())
+  const stack = [root]
+  while (stack.length > 0) {
+    const node = stack.shift()
+    if(!node) continue
+    node.left = vals[0] != null ? new TreeNode(vals.shift()) : vals.shift()
+    node.right = vals[0] != null ? new TreeNode(vals.shift()) : vals.shift()
+    stack.push(node.left, node.right)
+  }
+  return root
 }
 
 // console.log(createTree([1, 2, 3]))
@@ -207,9 +223,17 @@ function printAsPyramid (root) {
   console.log(nodes)
 }
 
+function printAsArray (root) {
+  const ret = []
+  preorderTraversalRecursion(root, ret, true)
+  console.log(ret);
+}
+
 // printAsPyramid(createTree([1, 2, 3]))
 // printAsPyramid(createTree([1, 2, 3, null, null, 4,5]))
+// printAsArray(createTree([1,null,2,null,3,null,4,null,null]))
 
 exports.TreeNode = TreeNode
 exports.createTree = createTree
 exports.printAsPyramid = printAsPyramid
+exports.printAsArray = printAsArray

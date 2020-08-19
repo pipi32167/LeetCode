@@ -21,7 +21,7 @@ fn find_duplicate(paths: Vec<&str>) -> Vec<Vec<String>> {
           fullpaths.push(fullpath)
         }
       } else {
-        let mut fullpaths: Vec<String> = vec![fullpath];
+        let fullpaths: Vec<String> = vec![fullpath];
         dict.insert(content, fullpaths);
       }
     }

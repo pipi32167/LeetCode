@@ -2,16 +2,16 @@ mod problem_0343 {
 
   pub fn integer_break(n: usize) -> u64 {
     let mut dp: Vec<u64> = vec![];
-    dp.resize_default(n + 1);
+    dp.resize_with(n + 1, Default::default);
 
     for i in 1usize..=n {
       let l: usize = (i as u32 as f64).sqrt() as usize;
-      // println!("i: {}, l: {}", i, l);
+      println!("i: {}, l: {}", i, l);
       for j in l..=(i - 1) {
         dp[i] = dp[i].max((j as u64).max(dp[j]) * ((i - j) as u64).max(dp[i - j]));
       }
     }
-    // println!("{:?}", dp);
+    println!("{:?}", dp);
     dp[n]
   }
 }

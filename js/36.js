@@ -1,3 +1,5 @@
+const { ok } = require("assert");
+
 var isRowValid = function (board, row) {
   
   for(var i = 0; i < 9; i++) {
@@ -86,7 +88,7 @@ var isValidSudoku = function(board) {
   return true;
 };
 
-console.log(isValidSudoku([
+ok(isValidSudoku([
   ["5","3",".",".","7",".",".",".","."],
   ["6",".",".","1","9","5",".",".","."],
   [".","9","8",".",".",".",".","6","."],
@@ -98,7 +100,7 @@ console.log(isValidSudoku([
   [".",".",".",".","8",".",".","7","9"]
 ]));
 
-console.log(isValidSudoku([
+ok(!isValidSudoku([
   ["5","3",".",".","7",".",".","5","."],
   ["6",".",".","1","9","5",".",".","."],
   [".","9","8",".",".",".",".","6","."],
@@ -110,7 +112,7 @@ console.log(isValidSudoku([
   [".",".",".",".","8",".",".","7","9"]
 ]));
 
-console.log(isValidSudoku([
+ok(!isValidSudoku([
   ["8","3",".",".","7",".",".",".","."],
   ["6",".",".","1","9","5",".",".","."],
   [".","9","8",".",".",".",".","6","."],
@@ -122,7 +124,7 @@ console.log(isValidSudoku([
   [".",".",".",".","8",".",".","7","9"]
 ]));
 
-console.log(isValidSudoku([
+ok(!isValidSudoku([
   ["8","3",".",".","7",".",".",".","."],
   ["6",".",".","1","9","5",".",".","."],
   [".","9","5",".",".",".",".","6","."],
