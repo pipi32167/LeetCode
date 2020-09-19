@@ -1,38 +1,71 @@
--- create table Employee (
---   Id int(11),
---   Name varchar(64),
---   Salary int(11),
---   DepartmentId int(11)
--- );
+# Write your MySQL query statement below
 
--- insert into Employee (Id, Name, Salary, DepartmentId) values
--- (1  , 'Joe'   , 85000, 1),
--- (2  , 'Henry' , 80000, 2),
--- (3  , 'Sam'   , 60000, 2),
--- (4  , 'Max'   , 90000, 1),
--- (5  , 'Janet' , 69000, 1),
--- (6  , 'Randy' , 85000, 1),
--- (7  , 'Will'  , 70000, 1);
+-- with 
+-- salary_order as (
+--   select 
+--     DepartmentId,
+--     Salary
+--   from Employee
+--   group by DepartmentId, Salary
+--   order by DepartmentId, Salary desc
+-- ),
+-- salary_ranks as (
+--   select 
+--     DepartmentId,
+--     Salary,
+--     if(
+--       @beforeDeptId = DepartmentId,
+--       @rank := @rank + 1,
+--       @rank := 1
+--     ) as r,
+--     @beforeDeptId := DepartmentId
+--   from salary_order, (select @rank := 1, @beforeDeptId := 0) t
+-- ),
+-- top_3_salary as (
+--   select 
+--     DepartmentId,
+--     min(Salary) as top_3_salary
+--   from salary_ranks 
+--   where r <= 3
+--   group by DepartmentId 
+-- )
+-- select 
+--   d.Name as Department,
+--   e.Name as Employee,
+--   e.Salary
+-- from Department d, Employee e, top_3_salary t
+-- where e.Salary >= t.top_3_salary and d.Id = e.DepartmentId and d.Id = t.DepartmentId;
 
--- create table Department (
---   Id int(11),
---   Name varchar(64)
--- );
-
-insert into Department (Id, Name) values
-(1  , 'IT'),
-(2  , 'Sales');
-
-
--- with top_3 as (
-
--- );
-
-select *, 
-  (case DepartmentId
-    when @curDId then @curRow := @curRow + 1
-    else @curRow := 1 and @curDId := Id
-  end) as rank 
-from Employee e, (select @curRow := 0, @curDId := 0)
-order by DepartmentId, Salary desc
-;
+with 
+salary_ranks as (
+  select 
+    DepartmentId,
+    Salary,
+    if(
+      @beforeDeptId <> DepartmentId,
+      @rank := 1,
+      if( 
+        @beforeSalary = Salary,
+        @rank,
+        @rank := @rank + 1
+      )
+    ) as r,
+    @beforeDeptId := DepartmentId,
+    @beforeSalary := Salary
+  from Employee, (select @rank := 1, @beforeDeptId := 0, @beforeSalary := 0) t
+  order by DepartmentId, Salary desc
+),
+top_3_salary as (
+  select 
+    DepartmentId,
+    min(Salary) as top_3_salary
+  from salary_ranks 
+  where r <= 3
+  group by DepartmentId 
+)
+select 
+  d.Name as Department,
+  e.Name as Employee,
+  e.Salary
+from Department d, Employee e, top_3_salary t
+where e.Salary >= t.top_3_salary and d.Id = e.DepartmentId and d.Id = t.DepartmentId;
