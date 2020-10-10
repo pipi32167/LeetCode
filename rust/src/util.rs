@@ -1,5 +1,5 @@
 use std::cell::RefCell;
-use std::collections::VecDeque;
+use std::collections::{HashMap, VecDeque};
 use std::rc::Rc;
 
 // Definition for singly-linked list.
@@ -27,7 +27,6 @@ impl ListNode {
   }
 
   pub fn make_array_from_list(head: Option<Box<Self>>) -> Vec<i32> {
-    
     let mut head = head;
     let mut arr: Vec<i32> = Vec::new();
     while let Some(node2) = head {
@@ -65,13 +64,16 @@ impl TreeNode {
     let root = Rc::new(RefCell::new(Self::new(arr.pop_front().unwrap().unwrap())));
     let mut stack: VecDeque<Rc<RefCell<Self>>> = VecDeque::from(vec![root.clone()]);
 
-    let mut arr: VecDeque<Option<Rc<RefCell<Self>>>> = arr.into_iter().map(|e| {
-      if let Some(e) = e {
-        Some(Rc::new(RefCell::new(Self::new(e))))
-      } else {
-        None
-      }
-    }).collect();
+    let mut arr: VecDeque<Option<Rc<RefCell<Self>>>> = arr
+      .into_iter()
+      .map(|e| {
+        if let Some(e) = e {
+          Some(Rc::new(RefCell::new(Self::new(e))))
+        } else {
+          None
+        }
+      })
+      .collect();
 
     while stack.len() > 0 {
       let node = stack.pop_front().unwrap();
@@ -88,7 +90,6 @@ impl TreeNode {
         node.borrow_mut().right = None;
       }
     }
-    
     // println!("make_tree_from_list: {:?}", root);
     Some(root)
   }
@@ -179,8 +180,7 @@ fn test_make_tree_from_array() {
 }
 
 pub fn split(s: &str) -> Vec<String> {
-  s
-    .split("")
+  s.split("")
     .map(|x| x.to_string())
     .collect::<Vec<String>>()
     .into_iter()
@@ -208,11 +208,32 @@ macro_rules! min {
   };
 }
 
-
 #[test]
 fn test_max_min() {
-  let ret = max!(1,2,3,4,5);
+  let ret = max!(1, 2, 3, 4, 5);
   assert_eq!(ret, 5);
-  let ret = min!(1,2,3,4,5);
+  let ret = min!(1, 2, 3, 4, 5);
   assert_eq!(ret, 1);
+}
+
+pub fn collect_as_hashmap<T>(v: &Vec<T>) -> HashMap<T, usize> 
+where T: std::cmp::Eq, 
+      T: std::hash::Hash, 
+      T: std::marker::Copy {
+  v.into_iter().fold(HashMap::new(), |mut acc, x| {
+    let entry = acc.entry(*x).or_insert(0);
+    *entry += 1;
+    acc
+  })
+}
+
+#[test]
+fn test_collect_as_hashmap() {
+  let v = vec![1, 1, 2, 2, 3, 4, 5];
+  let expect: HashMap<i32, usize> = [(1,2), (2,2), (3,1), (4,1), (5,1)].iter().cloned().collect();
+  assert_eq!(collect_as_hashmap::<i32>(&v), expect);
+
+  let v: Vec<char> = "cabc".chars().collect();
+  let expect: HashMap<char, usize> = [('a',1), ('b',1), ('c',2)].iter().cloned().collect();
+  assert_eq!(collect_as_hashmap(&v), expect);
 }
