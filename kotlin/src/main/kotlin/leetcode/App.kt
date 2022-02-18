@@ -10,6 +10,18 @@ class App {
         }
 }
 
-fun main(args: Array<String>) {
+class Test {
+    val mapStr1 = "abcdefghijklmnopqrstuvwxyz1234567890"
+    val mapStr2 = "jv2xgib3hqanwoc85l4utmdrf9y1zs0ep67k"
+    val map: Map<String, String> = mapStr1
+        .asSequence()
+        .mapIndexed { idx, value ->  Pair(value as String, mapStr2[idx] as String) }
+        .toMap()
+
+}
+
+fun main(args: Array<String>) {    
     println(App().greeting)
+    Test().mapStr1.length
+    println(Test().map)
 }

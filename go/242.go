@@ -1,6 +1,9 @@
 package main
 
-import "sort"
+import (
+	"bytes"
+	"sort"
+)
 
 func isAnagram(s string, t string) bool {
 
@@ -8,9 +11,11 @@ func isAnagram(s string, t string) bool {
 		return false
 	}
 
-	return sort.Sort(s) == sort.Sort(t)
-}
+	s2 := []byte(s)
+	t2 := []byte(t)
 
-func main() {
-	println(isAnaragram("cat", "tac"))
+	sort.SliceStable(s2, func(i, j int) bool { return s2[i] < s2[j] })
+	sort.SliceStable(t2, func(i, j int) bool { return t2[i] < t2[j] })
+
+	return bytes.Compare(s2, t2) == 0
 }
